@@ -4,24 +4,23 @@
 					<div class="city_hot">
 						<h2>热门城市</h2>
 						<ul class="clearfix">
-							<li v-for="(item) in hotCity" :key="item.id">{{item.nm}}</li>
+							<li v-for="(item) in hotCity" :key="item.id" @touchend="toCity(item.nm,item.id)">{{item.nm}}</li>
 						</ul>
 					</div>
 					<div class="city_sort" ref="toCity">
 						<div v-for="(item) in cityList" :key="item.index">
 							<h2>{{item.index}}</h2>
 							<ul>
-								<li v-for="(itemList) in item.list" :key="itemList.id">{{itemList.nm}}</li>
+								<li v-for="(itemList) in item.list" :key="itemList.id"  @touchend="toCity(itemList.nm,itemList.id)">{{itemList.nm}}</li>
 							</ul>
 						</div>
 					</div>
 				</div>
 				<div class="city_index">
 					<ul>
-						<li v-for="(item,index) in cityList" :key="item.index" @touchstart="toCitylist(index)">{{item.index}}</li>
+						<li v-for="(item,index) in cityList" :key="item.index" @touchend="toCitylist(index)">{{item.index}}</li>
 					</ul>
 				</div>
-
 			</div>
 </template>
 <script>
@@ -32,12 +31,20 @@ export default {
         hotCity:[],//热门城市集合
       }
     },
+    components:{
+    },
     mounted() {
         this.getCityList()
     },
     methods: {
       getCityList(){
-        this.axios.get("/api/cityList").then((res)=>{
+        let cityList=window.localStorage.getItem("cityList"),
+              hotCity=window.localStorage.getItem("hotCity")
+            if (cityList&&hotCity) {
+                this.cityList=JSON.parse(cityList)
+                this.hotCity=JSON.parse(hotCity)
+            } else {
+                this.axios.get("/api/cityList").then((res)=>{
           // console.log(res);
           if (res.data.msg=="ok") {
             let cities=res.data.data.cities;
@@ -45,8 +52,11 @@ export default {
             this.cityList=cityList;
             this.hotCity=hotCity;
             // console.log(cityList);
+            window.localStorage.setItem("cityList",JSON.stringify(cityList));
+            window.localStorage.setItem("hotCity",JSON.stringify(hotCity));
           }
         })
+            }
       },
       formatCity(cities){ //格式化城市
         let cityList=[],hotCity=[];
@@ -97,13 +107,19 @@ export default {
       // console.log(this.$refs.toCity.parentNode);
             this.$refs.toCity.parentNode.scrollTop = h2[i].offsetTop;
             // console.log(1);
+      },
+      toCity(nm,id){
+          this.$store.commit("CityInfo",{nm,id})
+          this.$router.push("/movie/nowplaying")
+          window.localStorage.setItem("nowNm",nm)//存储数据页面刷新不丢失
+          window.localStorage.setItem("nowId",id)
       }
     }
 }
 </script>
 <style >
 #content .city_body{ display: flex; width:100%; position: relative; top: 0;bottom: 0;}
-.city_body .city_list{ flex:1; overflow: auto; background: #FFF5F0;}
+.city_body .city_list{ flex:1; overflow: auto; background: #FFF5F0;margin-top: 100px;}
 .city_body .city_list::-webkit-scrollbar{
     background-color:transparent;
     width:0;

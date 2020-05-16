@@ -24,6 +24,7 @@ export default {
         data() {
           return {
               cinemaList:[],
+              originId:-1,
           }
         },
         mounted() {
@@ -31,10 +32,13 @@ export default {
         },
         methods: {
        async  getCinemaList(){
-          const {data:res}= await this.axios.get("/api/cinemaList?cityId=10");
+         let cityId=this.$store.state.id
+         if(this.originId==cityId) return;
+          const {data:res}= await this.axios.get(`/api/cinemaList?cityId=${cityId}`);
             // console.log(res);
               if (res.msg=="ok"&&res.data.cinemas) {
                 this.cinemaList=res.data.cinemas;
+                this.originId=cityId
               }
               // console.log(this.cinemaList)
           }

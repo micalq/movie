@@ -21,17 +21,22 @@ export default {
         data() {
           return {
             movieList:[],
+          originId:-1,//原始id
           }
         },
-        mounted() {
+        activated() {
           this.getMovieList()
         },
         methods: {
-         async getMovieList(){
-           const {data:res}=await this.axios.get("/api/movieComingList?cityId=10");
+          async getMovieList(){
+            let cityId=this.$store.state.id;
+        //  console.log(1,cityId);
+              if(this.originId==cityId) return;
+           const {data:res}=await this.axios.get(`/api/movieComingList?cityId=${cityId}`);
               // console.log(res);
               if(res.msg=="ok"){
-            this.movieList=res.data.comingList
+            this.movieList=res.data.comingList;
+            this.originId=cityId
               }
           }
         }
@@ -39,7 +44,7 @@ export default {
 </script>
 <style scoped>
 #content .movie_body{ flex:1; overflow:auto;}
-.movie_body ul{ margin:0 12px; overflow: hidden;}
+.movie_body ul{ margin:90px 12px; overflow: hidden;}
 .movie_body ul li{ margin-top:12px; display: flex; align-items:center; border-bottom: 1px #e6e6e6 solid; padding-bottom: 10px;}
 .movie_body .pic_show{ width:64px; height: 90px;}
 .movie_body .pic_show img{ width:100%;}

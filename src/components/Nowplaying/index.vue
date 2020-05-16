@@ -1,11 +1,12 @@
 <template>
-    <div class="movie_body">
-				<ul>
-	<li v-for="(item) in movieList" :key="item.id">
-						<div class="pic_show"><img :src="item.img|setWH('130.180')"></div>
+      <div class="movie_body" ref="movie">
+   <!-- <Loading v-if="isLoading"> -->
+				<ul >
+	<li v-for="(item) in movieList" :key="item.id" >
+						<div class="pic_show"><img :src="item.img|setWH('130.180')" @tab="toDetail"></div>
 						<div class="info_list">
 							<h2>{{item.nm}}<img v-if="item.version" src="@/assets/maxs.png" alt=""></h2>
-							<p>观众评 <span class="grade">{{item.sc}}</span></p>
+							<p>想看: <span class="grade">{{item.wish}}</span></p>
 							<p>主演: {{item.star}}</p>
 							<p>{{item.rt}}</p>
 						</div>
@@ -14,32 +15,53 @@
 						</div>
 					</li>
 				</ul>
+   <!-- </Loading> -->
   </div>
 </template>
 <script>
+// import Scroll from 'better-scroll'
 export default {
       data() {
         return {
           movieList:[],//电影列表集合
+          isLoading:true,
+          originId:-1,//原始id
         }
       },
-      mounted() {
+      activated(){//激活keep-alive时调用
         this.getMovieList()
       },
       methods: {
        async getMovieList(){
-        const {data:res}= await this.axios.get("/api/movieOnInfoList?cityId=10");
+         let cityId=this.$store.state.id;
+        //  console.log(1,cityId);
+         if(this.originId==cityId) return;//如果id相等则没切换城市不继续执行
+        const {data:res}= await this.axios.get(`/api/movieOnInfoList?cityId=${cityId}`);
         console.log(res);
             if (res.msg=="ok") {
               this.movieList=res.data.movieList;
+              this.isLoading=false;
+            this.originId=cityId
+                /* this.$nextTick(()=>{
+                let scroll=new Scroll(this.$refs.movie,{
+                          tab:true,
+              })
+                      console.log(scroll);//hasVerticalScroll: false
+                      scroll.on("scroll",()=>{
+                        console.log(1)
+                      })
+                } ) */
             }
+        },
+        toDetail(){
+
         }
       },
 }
 </script>
 <style scoped>
 #content .movie_body{ flex:1; overflow:auto;}
-.movie_body ul{ margin:0 12px; overflow: hidden;}
+.movie_body ul{ margin:90px 12px; overflow: hidden;}
 .movie_body ul li{ margin-top:12px; display: flex; align-items:center; border-bottom: 1px #e6e6e6 solid; padding-bottom: 10px;}
 .movie_body .pic_show{ width:64px; height: 90px;}
 .movie_body .pic_show img{ width:100%;}
