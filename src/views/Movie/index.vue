@@ -21,6 +21,7 @@
         </keep-alive>
     </div>
     <Footer/>
+        <router-view name="detail"></router-view>
         <Message/>
   </div>
 </template>
@@ -28,12 +29,13 @@
 import Header from '@/components/header'
 import Footer from '@/components/footer'
 import Message from '@/components/Messagebox'
+// import Detail from '@components/Movie/detail'
 export default {
   name:"Movie",
   components:{
     Header,
     Footer,
-    Message
+    Message,
   }
 }
 </script>
