@@ -3,9 +3,9 @@
    <!-- <Loading v-if="isLoading"> -->
 				<ul >
 	<li v-for="(item) in movieList" :key="item.id" >
-						<div class="pic_show"><img :src="item.img|setWH('130.180')" @tab="toDetail"></div>
+						<div class="pic_show"><img :src="item.img|setWH('130.180')" @touchstart="toDetail(item.id)"></div>
 						<div class="info_list">
-							<h2>{{item.nm}}<img v-if="item.version" src="@/assets/maxs.png" alt=""></h2>
+							<h2  @touchstart="toDetail(item.id)">{{item.nm}}<img v-if="item.version" src="@/assets/maxs.png" alt=""></h2>
 							<p>想看: <span class="grade">{{item.wish}}</span></p>
 							<p>主演: {{item.star}}</p>
 							<p>{{item.rt}}</p>
@@ -53,8 +53,10 @@ export default {
                 } ) */
             }
         },
-        toDetail(){
-
+        toDetail(movieId){
+          // console.log(movieId);
+                // this.$router.push(`/movie/detail/${movieId}`)
+                this.$router.push("/movie/detail/1/"+movieId)
         }
       },
 }

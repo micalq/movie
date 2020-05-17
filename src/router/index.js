@@ -13,6 +13,22 @@ const routes = [
         {path:"comingsoon",component:()=>import("@/components/Comingsoon")},
         {path:"nowplaying",component:()=>import("@/components/Nowplaying")},
         {path:"search",component:()=>import("@/components/Search")},
+        {path:"detail/1/:movieId",components:{
+            detail:()=>import("@/views/Movie/detail"),
+            default:()=>import("@/components/Nowplaying")
+        },
+            props:{//路由组件传参
+              detail:true
+            }
+      },
+        {path:"detail/2/:movieId",components:{
+            detail:()=>import("@/views/Movie/detail"),
+            default:()=>import("@/components/Comingsoon")
+        },
+            props:{//路由组件传参
+              detail:true
+            }
+      }
       ]},
       // {path:"/cinema",component:Cinema},
 ];
